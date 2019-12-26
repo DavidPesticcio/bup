@@ -184,3 +184,21 @@ if __name__ == '__main__':
                 raise add_ex_ctx(add_ex_tb(ex2), ex)
 
     wrap_main(outer)
+
+def restore_lc_env():
+    # Once we're up and running with iso-8859-1, undo the bup-python
+    # LC_CTYPE hackery, so we don't affect unrelated subprocesses.
+    bup_lc_all = environ.get(b'BUP_LC_ALL')
+    if bup_lc_all:
+        del environ[b'LC_COLLATE']
+        del environ[b'LC_CTYPE']
+        del environ[b'LC_MONETARY']
+        del environ[b'LC_NUMERIC']
+        del environ[b'LC_TIME']
+        del environ[b'LC_MESSAGES']
+        del environ[b'LC_MESSAGES']
+        environ[b'LC_ALL'] = bup_lc_all
+        return
+    bup_lc_ctype = environ.get(b'BUP_LC_CTYPE')
+    if bup_lc_ctype:
+        environ[b'LC_CTYPE'] = bup_lc_ctype
